@@ -1,0 +1,19 @@
+{
+    "name": "djoumessi/ubimmo",
+    "description": "annonces ubiflow",
+    "type": "project",
+    "license": "GPL-3.0",
+    "authors": [
+        {
+            "name": "djoumessi",
+            "email": "djprince2000@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Ubi\\": "./ubi"
+        }
+    }
+}
