@@ -4,12 +4,12 @@
  * @package  Ubimmo
  */
 
-namespace Ubi\Api;
+namespace Inc\Ctr;
 
-use Ubi\Base\SettingsApi;
-use Ubi\Api\CronController;
-use Ubi\Base\BaseController;
-use Ubi\Api\ImportController;
+use Inc\Base\SettingsApi;
+use Inc\Ctr\CronController;
+use Inc\Base\BaseController;
+use Inc\Ctr\ImportController;
 
 
 /**
@@ -25,8 +25,6 @@ class AnnonceursController extends BaseController
 
     public $importController;
 
-    public $crontache;
-
     public function register()
     {
         $this->settings = new SettingsApi();
@@ -34,8 +32,6 @@ class AnnonceursController extends BaseController
         $this->setSubpages();
 
         $this->enregitrer_annonceurs();
-
-        $this->crontache = new CronController();
 
         $this->importController = new ImportController();
 
@@ -141,7 +137,6 @@ class AnnonceursController extends BaseController
                     ];
 
                     $annonceur_id = wp_insert_user($user_data);
-
                     // success
                     if (!is_wp_error($annonceur_id)) {
                         $this->display_message('Agent enregistré!');
@@ -201,10 +196,10 @@ class AnnonceursController extends BaseController
                         $this->importController->create_post($annonceur_data['url'], $annonceur_data['id']);
 
                         //créer la tache cron
-                        $this->crontache->schedule_cron_create_post($annonceur_data['url'], $annonceur_data['id']);
+                        $this->importController->schedule_cron_create_post($annonceur_data['url'], $annonceur_data['id']);
                     } else {
                         //supprimer la tache cron si existe
-                        $this->crontache->ubimmo_supprimer_cron_job($annonceur_data['url'], $annonceur_data['id']);
+                        $this->importController->ubimmo_supprimer_cron_job($annonceur_data['url'], $annonceur_data['id']);
                     }
 
                     break;

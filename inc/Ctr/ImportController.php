@@ -4,10 +4,10 @@
  * @package  Ubimmo
  */
 
-namespace Ubi\Api;
+namespace Inc\Ctr;
 
-use Ubi\Base\SettingsApi;
-use Ubi\Base\BaseController;
+use Inc\Base\SettingsApi;
+use Inc\Base\BaseController;
 
 /**
  * Code pour gérer les imports 
@@ -19,22 +19,23 @@ class ImportController extends BaseController
     public function register()
     {
         $this->settings = new SettingsApi();
+		add_action('ubimmo_cron_job', array($this, 'ubimmo_do_cron_job'));
     }
 
-    public function import_xml($xml)
-    {
-        // Récupérer le contenu du fichier XML
-        $context  = stream_context_create(array('http' => array('header' => 'Accept: application/xml')));
-        $xml_content = (file_get_contents($xml, false, $context));
+	public function import_xml($xml)
+	{
+		// Récupérer le contenu du fichier XML
+		$context  = stream_context_create(array('http' => array('header' => 'Accept: application/xml')));
+		$xml_content = file_get_contents($xml, false, $context);
+		// Charger le contenu XML dans un objet SimpleXML
+		$xml_data = simplexml_load_string($xml_content);
 
-        // Charger le contenu XML dans un objet SimpleXML
-        $xml_data = null !== (simplexml_load_string($xml_content)) ? (simplexml_load_string($xml_content)) : '';
-        if (empty($xml_data)) {
-            wp_die('vérifier le lien. Aucune donnée');
-        }
+		if ($xml_data === false) {
+			wp_die('Erreur lors du chargement du XML. Veuillez vérifier le lien.');
+		}
 
-        return $xml_data;
-    }
+		return $xml_data;
+	}
 
     public function update_user($xml_data, $id_user)
     {
@@ -47,7 +48,7 @@ class ImportController extends BaseController
             $display_name = isset($data->coordonnees->nom) ? htmlspecialchars($data->coordonnees->nom) : '';
             $client_telephone = isset($data->coordonnees->telephone) ? htmlspecialchars($data->coordonnees->telephone) : '';
             $client_adresse_ville = isset($data->coordonnees->adresse->ville) ? htmlspecialchars($data->coordonnees->adresse->ville) : '';
-
+			
             //mettre a jour les données de l'utilisateur
             if (empty(get_user_by('email', $email_user))) {
                 $test = wp_update_user(
@@ -273,7 +274,7 @@ class ImportController extends BaseController
     public function get_reg_and_dep_from_postal_code($code_postal)
     {
         //fichier departement et région
-        $json_data = file_get_contents("$this->plugin_path/Ubi/Api/Tools/departements-region.json");
+        $json_data = file_get_contents("$this->plugin_path/Inc/Ctr/Tools/departements-region.json");
 
         $departements_array = json_decode($json_data, true); // décoder le fichier JSON en tableau associatif
 
@@ -287,33 +288,79 @@ class ImportController extends BaseController
         }
     }
 
-    public function get_reg_and_dep_taxonomies_id($code_postal)
+	public function get_reg_and_dep_taxonomies_id($code_postal)
+	{
+		// Récupérer la région et le département correspondant au code postal
+		$data_location = $this->get_reg_and_dep_from_postal_code($code_postal);
+
+		$region = $data_location['region'];
+		$department = $data_location['department'];
+
+		$localisation_taxonomy = 'localisation';
+		
+		// Vérifier si la région existe déjà et la récupérer ou la créer
+		$region_term = term_exists($region, $localisation_taxonomy);
+		if (is_wp_error($region_term)) {
+			// Gérer l'erreur si term_exists renvoie un objet WP_Error
+			return array('error' => 'Erreur lors de la vérification de la région');
+		}
+		
+		if (!$region_term) {
+			$region_term = wp_insert_term($region, $localisation_taxonomy);
+			if (is_wp_error($region_term)) {
+				// Gérer l'erreur si wp_insert_term renvoie un objet WP_Error
+				return array('error' => 'Erreur lors de la création de la région');
+			}
+		}
+
+		// Vérifier si le département existe déjà et le récupérer ou le créer comme sous-catégorie de la région
+		$department_term = term_exists($department, $localisation_taxonomy, $region_term['term_id']);
+		if (is_wp_error($department_term)) {
+			// Gérer l'erreur si term_exists renvoie un objet WP_Error
+			return array('error' => 'Erreur lors de la vérification du département');
+		}
+
+		if (!$department_term) {
+			$department_term = wp_insert_term($department, $localisation_taxonomy, array(
+				'parent' => $region_term['term_id'],
+			));
+			if (is_wp_error($department_term)) {
+				// Gérer l'erreur si wp_insert_term renvoie un objet WP_Error
+				return array('error' => 'Erreur lors de la création du département');
+			}
+		}
+
+		// Retourner les identifiants des termes de taxonomie créés
+		return array(
+			'region_id' => $region_term['term_id'],
+			'department_id' => $department_term['term_id'],
+		);
+	}
+	
+	// Planification de la tâche cron
+    public function schedule_cron_create_post($url, $id)
     {
-        // Récupérer la région et le département correspondant au code postal
-        $data_location = $this->get_reg_and_dep_from_postal_code($code_postal);
+        $interval = get_the_author_meta('interval', $id);
 
-        $region = $data_location['region'];
-        $department = $data_location['department'];
-
-        $localisation_taxonomy = 'localisation';
-        // Vérifier si la région existe déjà et la récupérer ou la créer
-        $region_term = term_exists($region, $localisation_taxonomy);
-        if (!$region_term) {
-            $region_term = wp_insert_term($region, $localisation_taxonomy);
+        if (!wp_next_scheduled('ubimmo_cron_job', array($url, $id))) {
+            wp_schedule_event(time(), $interval, 'ubimmo_cron_job', array($url, $id));
         }
+    }
+	
+	// Fonction exécutée par la tâche cron
+    public function ubimmo_do_cron_job($url, $id)
+    {
 
-        // Vérifier si le département existe déjà et le récupérer ou le créer comme sous-catégorie de la région
-        $department_term = term_exists($department, $localisation_taxonomy, $region_term['term_id']);
-        if (!$department_term) {
-            $department_term = wp_insert_term($department, $localisation_taxonomy, array(
-                'parent' => $region_term['term_id'],
-            ));
+	   $this->create_post($url, $id);
+		$this->ubimmo_supprimer_cron_job($url, $id);
+		$this->schedule_cron_create_post($url, $id);
+    }
+
+    // Nettoyage de la tâche cron
+    public function ubimmo_supprimer_cron_job($url, $id)
+    {
+        if (wp_next_scheduled('ubimmo_cron_job', array($url, $id))) {
+            wp_clear_scheduled_hook('ubimmo_cron_job', array($url, $id));
         }
-
-        // Retourner les identifiants des termes de taxonomie créés
-        return array(
-            'region_id' => $region_term['term_id'],
-            'department_id' => $department_term['term_id'],
-        );
     }
 }

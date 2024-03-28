@@ -1,19 +1,15 @@
 <?php
-
 /**
- * @package  Ubimmo
+ * @package  AlecadddPlugin
  */
-
-namespace Ubi\Base;
+namespace Inc\Base;
 
 class Activate
 {
-
-	public static function activate()
-	{
+	public static function activate() {
 		flush_rewrite_rules();
 
-		$default = array();
+        		$default = array();
 
 		if (!get_option('ubimmo_settings')) {
 

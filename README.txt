@@ -9,7 +9,25 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Description
 -----------
-Ubimmo est un plugin WordPress qui simplifie l'importation automatique des annonces immobilières sur Ubiflow. Ce plugin est conçu pour les professionnels de l'immobilier qui cherchent à gagner du temps en automatisant le processus d'importation des annonces.
+**Optimisez votre flux de travail immobilier avec Ubimmo : le plugin WordPress pour l'importation automatique des annonces sur Ubiflow**
+
+Professionnels de l'immobilier, gagnez du temps et simplifiez votre processus d'importation d'annonces avec Ubimmo, le plugin WordPress indispensable.
+
+Ubimmo est conçu pour rationaliser l'intégration de vos annonces immobilières sur Ubiflow. Grâce à son automatisation, vous pouvez :
+
+* **Importer instantanément les annonces :** Plus besoin de saisir manuellement les informations. Ubimmo récupère automatiquement les données de votre CRM ou de votre logiciel de gestion immobilière et les importe sur Ubiflow.
+* **Synchronisation en temps réel :** Les mises à jour des annonces sont synchronisées en temps réel, garantissant que vos annonces sur Ubiflow sont toujours à jour.
+* **Personnalisation avancée :** Configurez des règles de mappage personnalisées pour adapter les champs de données à vos besoins spécifiques.
+* **Gain de temps considérable :** Automatisez les tâches répétitives et libérez du temps pour vous concentrer sur des activités plus stratégiques.
+
+En utilisant Ubimmo, vous pouvez :
+
+* Améliorer l'efficacité de votre processus d'importation d'annonces
+* Réduire les erreurs de saisie manuelle
+* Augmenter la visibilité de vos annonces sur Ubiflow
+* Attirer davantage de clients potentiels
+
+Si vous cherchez un moyen d'optimiser votre flux de travail immobilier, Ubimmo est la solution idéale. Installez le plugin WordPress dès aujourd'hui et commencez à importer automatiquement vos annonces sur Ubiflow.
 
 Features
 --------

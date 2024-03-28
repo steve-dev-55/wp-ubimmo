@@ -1,4 +1,5 @@
 <div class="wrap">
+<img src="<?php echo plugins_url( 'ubimmo/templates/images/logo-ubimmo.jpg' ); ?>" alt="Logo ubimmo" style="position: absolute; top: 0; right: 0; max-width:192px;">
     <h1>Agents Immobiliers</h1>
     <?php settings_errors(); ?>
     <br>
@@ -15,6 +16,8 @@
 
             <h1>Liste des Agents Immobiliers</h1>
             <br>
+			<?php if (isset($liste_annonceurs) and !empty($liste_annonceurs)): ?>
+
             <table class="cpt-table">
                 <thead>
                     <tr>
@@ -27,21 +30,21 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php if (isset($liste_annonceurs))
+                    <?php 
                         foreach ($liste_annonceurs as $annonceur_list) :
-                            $url_xml = get_the_author_meta('url_xml', $annonceur_list->id);
-                            $nbr_annonces = count_user_posts($annonceur_list->id, 'biens_immobiliers');
-                            $activation = get_the_author_meta('activation', $annonceur_list->id);
+                            $url_xml = get_the_author_meta('url_xml', $annonceur_list->ID);
+                            $nbr_annonces = count_user_posts($annonceur_list->ID, 'biens_immobiliers');
+                            $activation = get_the_author_meta('activation', $annonceur_list->ID);
                             $checked = ($activation == 1) ? 'checked' : '';
                     ?>
                         <tr>
-                            <td><?php echo $annonceur_list->id; ?></td>
+                            <td><?php echo $annonceur_list->ID; ?></td>
                             <td class="text-center">
                                 <form method="post">
                                     <input type="hidden" name="action" value="activer_annonceur">
-                                    <input type="hidden" name="id" value="<?php echo $annonceur_list->id; ?>">
+                                    <input type="hidden" name="id" value="<?php echo $annonceur_list->ID; ?>">
                                     <input type="hidden" name="url" value="<?php echo $url_xml; ?>">
-                                    <div class="ui-toggle mb-10"><input onchange="this.form.submit()" type="checkbox" id="activation<?php echo $annonceur_list->id; ?>" name="activation" value="1" class="" <?php echo $checked; ?>><label for="activation<?php echo $annonceur_list->id; ?>">
+                                    <div class="ui-toggle mb-10"><input onchange="this.form.submit()" type="checkbox" id="activation<?php echo $annonceur_list->ID; ?>" name="activation" value="1" class="" <?php echo $checked; ?>><label for="activation<?php echo $annonceur_list->ID; ?>">
                                             <div></div>
                                         </label>
                                     </div>
@@ -52,10 +55,10 @@
                             <td class="text-center"><?php echo $nbr_annonces ?></td>
                             <td class="text-center">
 
-                                <a class="button button-primary button-small" href="?page=ubi_agents&action=editer_annonceur&id=<?php echo $annonceur_list->id; ?>">Modifier</a>
+                                <a class="button button-primary button-small" href="?page=ubi_agents&action=editer_annonceur&id=<?php echo $annonceur_list->ID; ?>">Modifier</a>
                                 <?php echo '<form method="post" class="inline-block">';
                                 echo '<input type="hidden" name="action" value="supprimer_annonceur">';
-                                echo '<input type="hidden" name="id" value="' . $annonceur_list->id . '">';
+                                echo '<input type="hidden" name="id" value="' . $annonceur_list->ID . '">';
                                 submit_button('Supprimer', 'delete small', 'submit', false, array(
                                     'onclick' => 'return confirm("vous allez supprimer ' . $annonceur_list->user_login . '? Les annonces associées a ce compte seront supprimé.");'
                                 ));
@@ -75,7 +78,10 @@
                     </tr>
                 </tfoot>
             </table>
+           <?php else: ?>
+            <h3>Aucun annonceur enregitré pour le moment</h3>
 
+		  <?php endif; ?>
         </div>
 
         <div id="tab-2" class="tab-pane <?php echo (isset($_GET['action']) && $_GET['action'] == 'editer_annonceur') ? 'active' : '' ?>">

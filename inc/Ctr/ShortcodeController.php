@@ -4,7 +4,7 @@
  * @package  Ubimmo
  */
 
-namespace Ubi\Api;
+namespace Inc\Ctr;
 
 use WP_Query;
 

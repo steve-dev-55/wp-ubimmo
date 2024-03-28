@@ -15,34 +15,32 @@ Text Domain: Ubimmo
 */
 
 // If this file is called firectly, abort!!!
-defined('ABSPATH') or die('Hey, what are you doing here? You silly human!');
+defined( 'ABSPATH' ) or die( 'Hey, what are you doing here? You silly human!' );
 
 // Require once the Composer Autoload
-if (file_exists(dirname(__FILE__) . '/vendor/autoload.php')) {
-    require_once dirname(__FILE__) . '/vendor/autoload.php';
+if ( file_exists( dirname( __FILE__ ) . '/vendor/autoload.php' ) ) {
+	require_once dirname( __FILE__ ) . '/vendor/autoload.php';
 }
 
 /**
  * The code that runs during plugin activation
  */
-function activate_ubimmo()
-{
-    Ubi\Base\Activate::activate();
+function activate_ubimmo_plugin() {
+	Inc\Base\Activate::activate();
 }
-register_activation_hook(__FILE__, 'activate_ubimmo');
+register_activation_hook( __FILE__, 'activate_ubimmo_plugin' );
 
 /**
  * The code that runs during plugin deactivation
  */
-function deactivate_ubimmo()
-{
-    Ubi\Base\Deactivate::deactivate();
+function deactivate_ubimmo_plugin() {
+	Inc\Base\Deactivate::deactivate();
 }
-register_deactivation_hook(__FILE__, 'deactivate_ubimmo');
+register_deactivation_hook( __FILE__, 'deactivate_ubimmo_plugin' );
 
 /**
  * Initialize all the core classes of the plugin
  */
-if (class_exists('Ubi\\Init')) {
-    Ubi\Init::registerServices();
+if ( class_exists( 'Inc\\Init' ) ) {
+	Inc\Init::register_services();
 }

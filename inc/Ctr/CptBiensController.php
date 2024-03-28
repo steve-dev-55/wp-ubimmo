@@ -4,10 +4,10 @@
  * @package  Ubimmo
  */
 
-namespace Ubi\Api;
+namespace Inc\Ctr;
 
-use Ubi\Base\SettingsApi;
-use Ubi\Base\BaseController;
+use Inc\Base\SettingsApi;
+use Inc\Base\BaseController;
 
 /**
  * Code pour gérer le custom post type

@@ -4,10 +4,10 @@
  * @package  Ubimmo
  */
 
-namespace Ubi\Api;
+namespace Inc\Ctr;
 
-use Ubi\Base\SettingsApi;
-use Ubi\Base\BaseController;
+use Inc\Base\SettingsApi;
+use Inc\Base\BaseController;
 
 /**
  * Code pour gérer le réglage
@@ -123,11 +123,11 @@ class SettingPageController extends BaseController
 		$name = $args['name'];
 		$options = $args['options'];
 		$selected_option = get_option($name);
-
 		echo '<select name="' . $name . '">';
 
 		foreach ($options as $value => $label) {
-			$selected = selected($selected_option, $value, false);
+			$selected = selected($selected_option, $label, false);
+			var_dump($selected);
 			echo '<option value="' . esc_attr($label) . '" ' . $selected . '>' . esc_html($label) . '</option>';
 		}
 

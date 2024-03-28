@@ -4,7 +4,7 @@
  * @package  Ubimmo
  */
 
-namespace Ubi\Base;
+namespace Inc\Base;
 
 class SettingsApi
 {

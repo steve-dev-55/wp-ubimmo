@@ -4,25 +4,20 @@
  * @package  Ubimmo
  */
 
-namespace Ubi\Api;
+namespace Inc\Ctr;
 
-use Ubi\Base\SettingsApi;
-use Ubi\Base\BaseController;
-use Ubi\Api\CronController;
+use Inc\Base\SettingsApi;
+use Inc\Base\BaseController;
 
 class DashboardController extends BaseController
 {
 	public $settings;
-
-	public $cronDisplay;
 
 	public $pages = array();
 
 	public function register()
 	{
 		$this->settings = new SettingsApi();
-
-		$this->cronDisplay = new CronController();
 
 		$this->setPages();
 
@@ -73,7 +68,7 @@ class DashboardController extends BaseController
 	public function do_check_annonceur($user)
 	{
 		// Obtenez la valeur à vérifier pour chaque utilisateur
-		$value_to_check = get_the_author_meta('activation', $user->id);
+		$value_to_check = get_the_author_meta('activation', $user->ID);
 
 		// Vérifiez si l'utilisateur doit être affiché ou non
 		if ($value_to_check == '1') {

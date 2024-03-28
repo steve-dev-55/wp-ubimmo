@@ -1,4 +1,5 @@
 <div class="wrap">
+<img src="<?php echo plugins_url( 'ubimmo/templates/images/logo-ubimmo.jpg' ); ?>" alt="Logo ubimmo" style="position: absolute; top: 0; right: 0; max-width:192px;">
     <h1>Tableau de bord d'annonces immobilières</h1>
     <br>
     <ul class="nav nav-tabs">
@@ -12,6 +13,8 @@
         <div id="tab-1" class="tab-pane active">
             <h3>Activités des Agents Immobiliers Actifs</h3>
             <br>
+			<?php if (isset($liste_annonceurs) AND !empty($liste_annonceurs)): ?>
+
             <table class="cpt-table">
                 <thead>
                     <tr>
@@ -26,14 +29,14 @@
                     <?php if (isset($liste_annonceurs))
                         // Tri des utilisateurs en fonction de leur prochaine exécution planifiée
                         usort($liste_annonceurs, function ($a, $b) {
-                            $a_next_cron_date = wp_next_scheduled('ubimmo_cron_job', array(get_the_author_meta('url_xml', $a->id), $a->id));
-                            $b_next_cron_date = wp_next_scheduled('ubimmo_cron_job', array(get_the_author_meta('url_xml', $b->id), $b->id));
+                            $a_next_cron_date = wp_next_scheduled('ubimmo_cron_job', array(get_the_author_meta('url_xml', $a->ID), $a->ID));
+                            $b_next_cron_date = wp_next_scheduled('ubimmo_cron_job', array(get_the_author_meta('url_xml', $b->ID), $b->ID));
                             return ($a_next_cron_date < $b_next_cron_date) ? -1 : 1;
                         });
 
                     foreach ($liste_annonceurs as $annonceur_list) :
                         if ($this->do_check_annonceur($annonceur_list)) {
-                            $id = $annonceur_list->id;
+                            $id = $annonceur_list->ID;
                             $pub_interval = get_the_author_meta('interval', $id);
                             $url_xml = get_the_author_meta('url_xml', $id);
                             //recupérer la date de l'execution du cron
@@ -76,8 +79,11 @@
                     </tr>
                 </tfoot>
             </table>
+           <?php else: ?>
+            <h3>Aucune activité enregitrée pour le moment</h3>
 
-        </div>
+		  <?php endif; ?>
+		  </div>
 
         <div id="tab-2" class="tab-pane">
             <!DOCTYPE html>
@@ -102,9 +108,7 @@
                 <h2>Contactez-nous</h2>
                 <p>Pour plus d'informations sur Ubimmo ou pour obtenir de l'aide pour l'installation et la configuration du plugin, n'hésitez pas à nous contacter :</p>
                 <ul>
-                    <li>Téléphone : 01 23 45 67 89</li>
-                    <li>E-mail : contact@ubimmo.com</li>
-                    <li>Adresse : 123 rue du Commerce, 75001 Paris</li>
+                    <li>E-mail : djprince2000@gmail.com</li>
                 </ul>
             </body>
 

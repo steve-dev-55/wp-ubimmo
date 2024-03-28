@@ -12,8 +12,6 @@
     "minimum-stability": "dev",
     "require": {},
     "autoload": {
-        "psr-4": {
-            "Ubi\\": "./ubi"
-        }
+        "psr-4": {"Inc\\": "./inc"}
     }
 }
